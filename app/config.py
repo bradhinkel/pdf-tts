@@ -12,5 +12,9 @@ AZURE_TTS_VOICE = os.getenv("AZURE_TTS_VOICE", "en-US-AriaNeural")
 PDF_STORAGE_PATH = os.getenv("PDF_STORAGE_PATH", str(Path(__file__).parent / "pdfs"))
 MAX_PDF_SIZE = int(os.getenv("MAX_PDF_SIZE", "100000000"))
 
+# Piper TTS
+PIPER_VOICE = os.getenv("PIPER_VOICE", "en_US-lessac-medium")
+PIPER_MODEL_DIR = os.getenv("PIPER_MODEL_DIR", str(Path(__file__).parent / "models" / "piper"))
+
 # XTTS-v2
 XTTS_SPEAKER = os.getenv("XTTS_SPEAKER", "Ana Florence")

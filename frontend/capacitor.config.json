@@ -1,0 +1,20 @@
+{
+  "appId": "com.bradhinkel.pdfreader",
+  "appName": "PDF Reader",
+  "webDir": "dist",
+  "server": {
+    "url": "https://reader.bradhinkel.com",
+    "cleartext": false
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "allowsLinkPreview": false,
+    "scrollEnabled": true
+  },
+  "plugins": {
+    "StatusBar": {
+      "style": "DEFAULT",
+      "backgroundColor": "#ffffff"
+    }
+  }
+}

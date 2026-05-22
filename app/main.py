@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
@@ -81,6 +82,16 @@ async def stream_audio(filename: str, tts: str = "azure"):
 
     text = extract_text(pdf_path)
     chunks = chunk_text(text)
+
+    if tts == "piper":
+        from app.piper_service import synthesize_all as piper_synth
+        try:
+            audio = await asyncio.get_event_loop().run_in_executor(
+                None, piper_synth, chunks
+            )
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"Piper error: {exc}")
+        return Response(content=audio, media_type="audio/wav")
 
     if tts == "xtts":
         import traceback
