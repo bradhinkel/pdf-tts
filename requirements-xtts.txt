@@ -1,0 +1,5 @@
+# Install separately for XTTS-v2 experiment (heavyweight — PyTorch + 1.8GB model download)
+# pip install -r requirements-xtts.txt
+TTS==0.22.0
+soundfile==0.12.1
+numpy==1.26.4

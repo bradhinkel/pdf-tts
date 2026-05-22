@@ -11,3 +11,6 @@ AZURE_TTS_VOICE = os.getenv("AZURE_TTS_VOICE", "en-US-AriaNeural")
 # Defaults to app/pdfs/ next to this file for local dev; override in .env for production
 PDF_STORAGE_PATH = os.getenv("PDF_STORAGE_PATH", str(Path(__file__).parent / "pdfs"))
 MAX_PDF_SIZE = int(os.getenv("MAX_PDF_SIZE", "100000000"))
+
+# XTTS-v2
+XTTS_SPEAKER = os.getenv("XTTS_SPEAKER", "Ana Florence")

@@ -1,10 +1,10 @@
 from pathlib import Path
 
 from fastapi import FastAPI, File, HTTPException, UploadFile
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
-from app.config import MAX_PDF_SIZE, PDF_STORAGE_PATH
+from app.config import MAX_PDF_SIZE, PDF_STORAGE_PATH, XTTS_SPEAKER
 from app.pdf_processor import chunk_text, extract_text
 from app.tts_service import synthesize_chunk
 
@@ -74,18 +74,27 @@ async def delete_pdf(filename: str):
 # ── Audio streaming ───────────────────────────────────────────────────────────
 
 @app.get("/api/stream-audio")
-async def stream_audio(filename: str):
+async def stream_audio(filename: str, tts: str = "azure"):
     pdf_path = _safe_path(filename)
     if not pdf_path.exists():
         raise HTTPException(status_code=404, detail="PDF not found")
 
+    text = extract_text(pdf_path)
+    chunks = chunk_text(text)
+
+    if tts == "xtts":
+        from app.xtts_service import synthesize_all
+        try:
+            audio = await synthesize_all(chunks, speaker=XTTS_SPEAKER)
+        except Exception as exc:
+            raise HTTPException(status_code=500, detail=f"XTTS error: {exc}")
+        return Response(content=audio, media_type="audio/wav")
+
+    # Default: Azure streaming
     async def generate():
-        text = extract_text(pdf_path)
-        chunks = chunk_text(text)
         for chunk in chunks:
             try:
-                audio = await synthesize_chunk(chunk)
-                yield audio
+                yield await synthesize_chunk(chunk)
             except Exception as exc:
                 print(f"TTS error skipping chunk: {exc}")
 
