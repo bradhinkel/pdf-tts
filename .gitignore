@@ -1,0 +1,10 @@
+.env
+.claude/
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+app/pdfs/
+*.egg-info/
+.pytest_cache/
