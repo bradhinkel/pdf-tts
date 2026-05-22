@@ -7,7 +7,12 @@ import pdfplumber
 def extract_text(pdf_path: Path) -> str:
     with pdfplumber.open(pdf_path) as pdf:
         pages = [page.extract_text() or "" for page in pdf.pages]
-    return "\n".join(pages)
+    text = "\n\n".join(pages)
+    # Collapse soft line breaks (single \n within a paragraph) into spaces
+    text = re.sub(r"(?<!\n)\n(?!\n)", " ", text)
+    # Collapse runs of spaces
+    text = re.sub(r" {2,}", " ", text)
+    return text.strip()
 
 
 def chunk_text(text: str, min_words: int = 10, max_words: int = 200) -> list[str]:
