@@ -10,9 +10,11 @@ _model = None
 def _load_model():
     global _model
     if _model is None:
-        logger.info("Loading XTTS-v2 model — first run takes ~1 min...")
+        import torch
+        use_gpu = torch.cuda.is_available()
+        logger.info("Loading XTTS-v2 model (gpu=%s) — first run downloads ~1.8 GB...", use_gpu)
         from TTS.api import TTS
-        _model = TTS("tts_models/multilingual/multi-speaker/xtts_v2", gpu=False)
+        _model = TTS("tts_models/multilingual/multi-speaker/xtts_v2", gpu=use_gpu)
         logger.info("XTTS-v2 model ready.")
     return _model
 

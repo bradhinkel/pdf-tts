@@ -1,6 +1,7 @@
 .env
 .claude/
 .venv/
+.venv-xtts/
 __pycache__/
 *.pyc
 *.pyo
