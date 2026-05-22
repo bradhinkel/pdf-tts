@@ -34,9 +34,11 @@ async def health():
 @app.get("/api/list-pdfs")
 async def list_pdfs():
     pdfs = sorted(
-        {"name": f.name, "size": f.stat().st_size}
-        for f in PDF_DIR.glob("*.pdf")
-        if f.is_file(),
+        (
+            {"name": f.name, "size": f.stat().st_size}
+            for f in PDF_DIR.glob("*.pdf")
+            if f.is_file()
+        ),
         key=lambda x: x["name"],
     )
     return {"pdfs": pdfs}
