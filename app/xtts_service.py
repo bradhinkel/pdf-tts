@@ -7,11 +7,29 @@ logger = logging.getLogger(__name__)
 _model = None  # underlying Xtts model
 
 
+def _patch_torch_load():
+    """PyTorch 2.6+ changed weights_only default to True, breaking TTS checkpoints.
+    Patch torch.load to keep weights_only=False for the TTS model load."""
+    import functools
+    import torch
+
+    _orig = torch.load
+
+    @functools.wraps(_orig)
+    def _patched(*args, **kwargs):
+        kwargs.setdefault("weights_only", False)
+        return _orig(*args, **kwargs)
+
+    torch.load = _patched
+
+
 def _load_model():
     global _model
     if _model is None:
         import torch
         from TTS.api import TTS
+
+        _patch_torch_load()
 
         use_gpu = torch.cuda.is_available()
         device = "cuda" if use_gpu else "cpu"
