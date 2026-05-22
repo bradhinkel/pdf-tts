@@ -9,6 +9,7 @@ torch==2.5.1+cu124
 torchaudio==2.5.1+cu124
 
 TTS==0.22.0
+transformers==4.44.2
 soundfile==0.12.1
 numpy==1.26.4
 

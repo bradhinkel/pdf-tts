@@ -23,7 +23,14 @@ export default function AudioPlayer({ filename, onClose }) {
   const togglePlay = () => {
     const audio = audioRef.current
     if (!audio) return
-    isPlaying ? audio.pause() : audio.play()
+    if (isPlaying) {
+      audio.pause()
+    } else {
+      audio.play().catch((err) => {
+        console.error('Playback error:', err)
+        setIsPlaying(false)
+      })
+    }
   }
 
   const onSeek = (e) => {

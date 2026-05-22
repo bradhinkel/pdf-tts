@@ -83,10 +83,12 @@ async def stream_audio(filename: str, tts: str = "azure"):
     chunks = chunk_text(text)
 
     if tts == "xtts":
+        import traceback
         from app.xtts_service import synthesize_all
         try:
             audio = await synthesize_all(chunks, speaker=XTTS_SPEAKER)
         except Exception as exc:
+            traceback.print_exc()
             raise HTTPException(status_code=500, detail=f"XTTS error: {exc}")
         return Response(content=audio, media_type="audio/wav")
 
