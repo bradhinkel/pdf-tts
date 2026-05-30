@@ -7,11 +7,24 @@ function fmt(s) {
   return `${m}:${sec.toString().padStart(2, '0')}`
 }
 
+// User-selectable TTS engines. XTTS stays dev-only via ?tts=xtts URL override.
+const ENGINES = [
+  { id: 'piper', label: 'Piper' },
+  { id: 'azure', label: 'Azure' },
+]
+
+// Initial engine: URL flag wins (also allows ?tts=xtts), else last choice, else Piper.
+function initialEngine() {
+  const flag = new URLSearchParams(window.location.search).get('tts')
+  return flag || localStorage.getItem('tts-engine') || 'piper'
+}
+
 export default function AudioPlayer({ filename, onClose }) {
   const audioRef = useRef(null)
   const [isPlaying, setIsPlaying] = useState(false)
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration] = useState(0)
+  const [engine, setEngine] = useState(initialEngine)
 
   // Restore saved position when filename changes
   useEffect(() => {
@@ -19,6 +32,11 @@ export default function AudioPlayer({ filename, onClose }) {
     setCurrentTime(saved)
     setIsPlaying(false)
   }, [filename])
+
+  // Persist engine choice across sessions
+  useEffect(() => {
+    localStorage.setItem('tts-engine', engine)
+  }, [engine])
 
   const togglePlay = () => {
     const audio = audioRef.current
@@ -41,11 +59,14 @@ export default function AudioPlayer({ filename, onClose }) {
 
   const pct = duration > 0 ? (currentTime / duration) * 100 : 0
 
+  const src =
+    `/api/stream-audio?filename=${encodeURIComponent(filename)}&tts=${encodeURIComponent(engine)}`
+
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl z-20 pb-safe">
       <audio
         ref={audioRef}
-        src={`/api/stream-audio?filename=${encodeURIComponent(filename)}`}
+        src={src}
         onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onTimeUpdate={(e) => {
@@ -85,6 +106,25 @@ export default function AudioPlayer({ filename, onClose }) {
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
+        </div>
+
+        {/* Voice engine toggle */}
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-xs text-gray-400">Voice</span>
+          <div className="inline-flex rounded-full bg-gray-100 p-0.5">
+            {ENGINES.map((e) => (
+              <button
+                key={e.id}
+                onClick={() => setEngine(e.id)}
+                aria-pressed={engine === e.id}
+                className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                  engine === e.id ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                {e.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Controls row */}

@@ -1,5 +1,9 @@
 # PDF Reader — Web-based PDF-to-Speech
 
+> **Teaching demo (frozen).** This is the simple reference version, used as a hands-on
+> "first build with Claude" project. It is intentionally kept small and stable. Active
+> development (multi-user auth, mobile app, design pass) continues in a separate repo.
+
 A self-hosted web app that converts PDF documents to spoken audio.
 
 I built this because I was having Claude generate PDF summaries of books, articles, and technical ideas — and I wanted a simple way to listen to them. Upload a PDF, hit play, and listen.
@@ -22,7 +26,7 @@ Open-source TTS that runs entirely on your server. Voice quality is functional �
 pip install -r requirements.txt
 ```
 
-Endpoint: `/api/stream-audio?filename=example.pdf&tts=piper`
+Endpoint: `/api/stream-audio?filename=example.pdf` (default — no flag needed)
 
 ### Azure TTS (recommended for regular use)
 **~$4–5 per 1 million characters. Excellent voice quality.**
@@ -34,7 +38,7 @@ AZURE_TTS_KEY=your_key_here
 AZURE_TTS_REGION=eastus   # or your region
 ```
 
-Endpoint: `/api/stream-audio?filename=example.pdf` (default)
+Endpoint: `/api/stream-audio?filename=example.pdf&tts=azure` (opt-in via flag). In the web player, append `?tts=azure` to the page URL.
 
 Cost reality: a 300-page book summary is roughly 150,000 characters — about $0.60. For personal use this is negligible.
 

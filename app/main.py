@@ -75,7 +75,7 @@ async def delete_pdf(filename: str):
 # ── Audio streaming ───────────────────────────────────────────────────────────
 
 @app.get("/api/stream-audio")
-async def stream_audio(filename: str, tts: str = "azure"):
+async def stream_audio(filename: str, tts: str = "piper"):
     pdf_path = _safe_path(filename)
     if not pdf_path.exists():
         raise HTTPException(status_code=404, detail="PDF not found")
@@ -103,7 +103,7 @@ async def stream_audio(filename: str, tts: str = "azure"):
             raise HTTPException(status_code=500, detail=f"XTTS error: {exc}")
         return Response(content=audio, media_type="audio/wav")
 
-    # Default: Azure streaming
+    # Azure streaming (opt-in via tts=azure)
     async def generate():
         for chunk in chunks:
             try:
